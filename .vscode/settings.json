@@ -1,4 +1,5 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
-    "C_Cpp.errorSquiggles": "Enabled"
+    "python.pythonPath": "/bin/python3",
+    "C_Cpp.errorSquiggles": "Enabled",
+    "jupyter.jupyterServerType": "local"
 }
