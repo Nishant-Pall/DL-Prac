@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "D:\\Code_Blooded\\Python\\python.exe",
+    "python.pythonPath": "/usr/bin/python3",
     "C_Cpp.errorSquiggles": "Enabled"
 }

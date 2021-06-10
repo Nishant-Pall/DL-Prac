@@ -9,15 +9,6 @@ from keras.models import Model
 from keras.layers import Dense, Embedding, Input, LSTM
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-from keras.optimizers import Adam, SGD
-
-try:
-    import keras.backend as K
-    if len(K.tensorflow_backend._get_available_gpus()) > 0:
-        from keras.layers import CuDNNLSTM as LSTM
-        from keras.layers import CuDNNGRU as GRU
-except:
-    pass
 
 
 # some configuration
@@ -32,7 +23,7 @@ LATENT_DIM = 25
 # load in the data
 input_texts = []
 target_texts = []
-for line in open('../hmm_class/robert_frost.txt'):
+for line in open('robert_frost.txt'):
     line = line.rstrip()
     if not line:
         continue
@@ -76,7 +67,7 @@ print('Shape of data tensor:', input_sequences.shape)
 # load in pre-trained word vectors
 print('Loading word vectors...')
 word2vec = {}
-with open(os.path.join('../large_files/glove.6B/glove.6B.%sd.txt' % EMBEDDING_DIM)) as f:
+with open(os.path.join('glove.6B.%sd.txt' % EMBEDDING_DIM)) as f:
     # is just a space-separated text file in the format:
     # word vec[0] vec[1] vec[2] ...
     for line in f:
@@ -134,7 +125,7 @@ model = Model([input_, initial_h, initial_c], output)
 model.compile(
     loss='categorical_crossentropy',
     # optimizer='rmsprop',
-    optimizer=Adam(lr=0.01),
+    optimizer="adam",
     # optimizer=SGD(lr=0.01, momentum=0.9),
     metrics=['accuracy']
 )
@@ -148,19 +139,6 @@ r = model.fit(
     epochs=EPOCHS,
     validation_split=VALIDATION_SPLIT
 )
-
-# plot some data
-plt.plot(r.history['loss'], label='loss')
-plt.plot(r.history['val_loss'], label='val_loss')
-plt.legend()
-plt.show()
-
-# accuracies
-plt.plot(r.history['accuracy'], label='acc')
-plt.plot(r.history['val_accuracy'], label='val_acc')
-plt.legend()
-plt.show()
-
 
 # make a sampling model
 input2 = Input(shape=(1,))  # we'll only input one word at a time
