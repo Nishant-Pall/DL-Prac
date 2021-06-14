@@ -1,4 +1,5 @@
 import sys
+import os
 
 
 def clean_data(file_name, trim_length):
@@ -12,7 +13,7 @@ def clean_data(file_name, trim_length):
         lines = lines.split('\t')
         shortened_txt.append([lines[0], lines[1]])
 
-    output_file = open(f'{file_name}_cleaned.txt', "w")
+    output_file = open(f'{os.path.splitext(file_name)[0]}_cleaned.txt', "w")
     for translation_pair in shortened_txt:
         output_file.write(f'{translation_pair}\n')
     output_file.close()
