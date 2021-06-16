@@ -11,7 +11,7 @@ def clean_data(file_name, trim_length):
         if t > trim_length:
             break
         lines = lines.split('\t')
-        shortened_txt.append([lines[0], lines[1]])
+        shortened_txt.append(lines[0] + " " + lines[1])
 
     output_file = open(f'{os.path.splitext(file_name)[0]}_cleaned.txt', "w")
     for translation_pair in shortened_txt:
