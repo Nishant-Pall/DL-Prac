@@ -19,13 +19,14 @@ def clean_data(file_name, trim_length):
     output_file.close()
 
 
-if len(sys.argv) > 2:
-    file_name = sys.argv[1]
-    trim_length = sys.argv[2]
-    trim_length = int(trim_length)
-else:
-    file_name = input("Enter name of file to be cleaned: ")
-    trim_length = int(input(
-        "Enter the length upto which you want to trim the file: "))
+if __name__ == '__main__':
+    if len(sys.argv) > 2:
+        file_name = sys.argv[1]
+        trim_length = sys.argv[2]
+        trim_length = int(trim_length)
+    else:
+        file_name = input("Enter name of file to be cleaned: ")
+        trim_length = int(input(
+            "Enter the length upto which you want to trim the file: "))
 
-clean_data(file_name=file_name, trim_length=trim_length)
+    clean_data(file_name=file_name, trim_length=trim_length)
