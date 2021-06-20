@@ -9,14 +9,14 @@ M = 3
 X = np.random.randn(1, T, D)
 
 input_ = Input(shape=(T, D))
-rnn = Bidirectional(GRU(M, return_state=True))
+rnn = Bidirectional(LSTM(M, return_state=True))
 x = rnn(input_)
 
 model = Model(inputs=input_, outputs=x)
-o1, h1, h2 = model.predict(X)
+o1, h1, c1, h2, c2 = model.predict(X)
 
 print(f'o1 : ${o1}')
 print(f'h1 : ${h1}')
-# print(f'c1 : ${c1}')
+print(f'c1 : ${c1}')
 print(f'h2 : ${h2}')
-# print(f'c2 : ${c2}')
+print(f'c2 : ${c2}')

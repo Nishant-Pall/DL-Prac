@@ -73,6 +73,3 @@ def gru2():
 
 
 lstm1()
-lstm2()
-gru1()
-gru2()
