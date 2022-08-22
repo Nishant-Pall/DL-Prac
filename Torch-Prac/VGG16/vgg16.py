@@ -25,11 +25,14 @@ class Identity(nn.Module):
 
 model = torchvision.models.vgg16(pretrained=True)
 
+for param in model.parameters():
+    param.requires_grad = False
 # Repalcing avgpool layer
 model.avgpool = Identity()
 
 # Replacing classifier layers
-model.classifier = nn.Linear(512, 10)
+model.classifier = nn.Sequential(
+    nn.Linear(512, 100), nn.ReLU(), nn.Linear(100, 10))
 print(model)
 
 train_dataset = datasets.CIFAR10(
