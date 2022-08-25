@@ -3,7 +3,7 @@ from torchtext.datasets import Multi30k
 from torchtext.data import Field, BucketIterator
 
 spacy_en = spacy.load('en_core_web_sm')
-spacy_ger = spacy.load('de_core_web_sm')
+spacy_ger = spacy.load('de_core_news_sm')
 
 
 def tokenize_eng(text):
