@@ -20,3 +20,33 @@ test_data.to_json("test.json", orient="records", lines=True)
 
 train_data.to_csv("train.csv", index=False)
 test_data.to_csv("test.csv", index=False)
+
+# Building vocab and iterators
+
+spacy_eng = spacy.load("en_core_web_sm")
+spacy_ger = spacy.load("de_core_news_sm")
+
+
+def tokenize_eng(text):
+    return [tok.text for tok in spacy_eng.tokenizer(text)]
+
+
+def tokenize_ger(text):
+    return [tok.text for tok in spacy_ger.tokenizer(text)]
+
+
+english = Field(sequential=True, use_vocab=True,
+                tokenize=tokenize_eng, lower=True)
+german = Field(sequential=True, use_vocab=True,
+               tokenize=tokenize_ger, lower=True)
+
+
+fields = {"English": ("eng", english), "German": ("ger", german)}
+
+train_data, test_data = TabularDataset.splits(
+    path="", train="train.json", test="test.json", format="json", fields=fields
+)
+
+train_iterator, test_iterator = BucketIerator.splits(
+    (train_data, test_data), batch_size=64
+)
