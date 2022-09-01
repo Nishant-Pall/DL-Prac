@@ -12,6 +12,19 @@ from PIL import Image
 # we need to setup a pytorch dataset to load the data
 # setup padding of every batch (all examples should be of same seq_len and setup dataloader)
 
+class Vocabulary:
+    def __init__(self, freq_threshold):
+        self.itos = {0: "<PAD>", 1: "<SOS>", 2: "<EOS>", 3: "<UNK>"}
+        self.stoi = {"<PAD>": 0, "<SOS>": 1, "<EOS>": 2, "<UNK>": 3}
+        self.freq_treshold = freq_threshold
+
+    def __len(self):
+        return len(self.itos)
+
+    @staticmethod
+    def tokenizer_eng(text):
+        return [tok.text.lower() for tok in spacy_eng.tokenizer(text)]
+
 
 class FlickrDataset(Dataset):
     def __init__(self, root_dir, captions_file, transform=None, freq_threshold=5):
