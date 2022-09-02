@@ -25,6 +25,29 @@ class Vocabulary:
     def tokenizer_eng(text):
         return [tok.text.lower() for tok in spacy_eng.tokenizer(text)]
 
+    def build_vocabulary(self, sentence_list):
+        frequencies = {}
+        idx = 4
+
+        for sentence in sentence_list:
+            for word in self.tokenizer_eng(sentence):
+                if word not in frequencies:
+                    frequencies[word] = 1
+                else:
+                    frequencies[word] += 1
+
+                if frequencies[word] == self.freq_threshold:
+                    self.stoi[word] = idx
+                    self.itos[idx] = word
+                    idx += 1
+
+    def numericalize(self, text):
+        tokenized_text = self.tokenizer_eng(text)
+
+        return [
+            self.stoi[token] if token in self.stoi else self.stoi["<UNK>"] for token in tokenized_text
+        ]
+
 
 class FlickrDataset(Dataset):
     def __init__(self, root_dir, captions_file, transform=None, freq_threshold=5):
