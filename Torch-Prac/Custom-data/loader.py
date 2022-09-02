@@ -4,6 +4,7 @@ import spacy
 import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
+import torchvision.transforms as transforms
 from PIL import Image
 
 
@@ -97,3 +98,41 @@ class MyCollate:
                                padding_value=self.pad_idx)
 
         return imgs, targets
+
+
+def get_loader(
+    root_folder,
+    annotation_file,
+    transform,
+    batch_size=32,
+    num_workers=8,
+    shuffle=True,
+    pin_memory=True
+):
+    dataset = FlickrDataset(root_folder, annotation_file, transform=transform)
+
+    pad_idx = dataset.vocab.stoi['<PAD>']
+
+    loader = Dataset(dataset=dataset, batch_size=batch_size, num_workers=num_workers,
+                     shuffle=shuffle, pin_memory=pin_memory, collate=MyCollate(pad_idx=pad_idx))
+
+    return loader
+
+
+def main():
+    transforms = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),
+            transforms.toTensor()
+        ]
+    )
+    dataloader = get_loader(
+        "flickr8k/images", annotation_file="flickr8k/captions.txt", transform=transforms)
+
+    for idx, (imgs, captions) in enumerate(dataloader):
+        print(imgs.shape)
+        print(captions.shape)
+
+
+if __name__ == "__main__":
+    main()
