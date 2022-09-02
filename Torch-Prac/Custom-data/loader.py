@@ -120,14 +120,14 @@ def get_loader(
 
 
 def main():
-    transforms = transforms.Compose(
+    transform = transforms.Compose(
         [
             transforms.Resize((224, 224)),
             transforms.toTensor()
         ]
     )
     dataloader = get_loader(
-        "flickr8k/images", annotation_file="flickr8k/captions.txt", transform=transforms)
+        "flickr8k/images", annotation_file="flickr8k/captions.txt", transform=transform)
 
     for idx, (imgs, captions) in enumerate(dataloader):
         print(imgs.shape)
