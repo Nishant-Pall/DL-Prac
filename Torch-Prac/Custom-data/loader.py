@@ -12,6 +12,9 @@ from PIL import Image
 # we need to setup a pytorch dataset to load the data
 # setup padding of every batch (all examples should be of same seq_len and setup dataloader)
 
+spacy_eng = spacy.load("en_core_web_sm")
+
+
 class Vocabulary:
     def __init__(self, freq_threshold):
         self.itos = {0: "<PAD>", 1: "<SOS>", 2: "<EOS>", 3: "<UNK>"}
@@ -79,3 +82,18 @@ class FlickrDataset(Dataset):
         numericalized_caption.append(self.vocab.stoi["<EOS>"])
 
         return img, torch.tensor(numericalized_caption)
+
+
+class MyCollate:
+    def __init__(self, pad_idx):
+        self.pad_idx = pad_idx
+
+    def __call__(self, batch):
+        imgs = [item[0].unsqueeze(0) for item in batch]
+        imgs = torch.cat(imgs, dim=0)
+
+        targets = [item[1] for item in batch]
+        targets = pad_sequence(targets, batch_first=False,
+                               padding_value=self.pad_idx)
+
+        return imgs, targets
