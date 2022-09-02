@@ -113,8 +113,8 @@ def get_loader(
 
     pad_idx = dataset.vocab.stoi['<PAD>']
 
-    loader = Dataset(dataset=dataset, batch_size=batch_size, num_workers=num_workers,
-                     shuffle=shuffle, pin_memory=pin_memory, collate=MyCollate(pad_idx=pad_idx))
+    loader = DataLoader(dataset=dataset, batch_size=batch_size, num_workers=num_workers,
+                        shuffle=shuffle, pin_memory=pin_memory, collate=MyCollate(pad_idx=pad_idx))
 
     return loader
 
