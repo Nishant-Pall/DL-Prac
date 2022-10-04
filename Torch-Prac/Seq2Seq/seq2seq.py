@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchtext.datasets import Multi30k
-from torchtext.legacy.data import Field, BucketIterator
+from torchtext.data import Field, BucketIterator
 import numpy as np
 import spacy
 import random
