@@ -1,3 +1,4 @@
+from ast import Mult
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -24,3 +25,67 @@ english = Field(tokenize=tokenizer_eng, lower=True,
                 init_token='<sos>', eos_token='<eos>')
 german = Field(tokenize=tokenizer_ger, lower=True,
                init_token='<sos>', eos_token='<eos>')
+
+train_data, validation_data, test_data = Multi30k.splits(
+    fields=(english, german), exts=('.en', '.de'))
+
+english.build_vocab(train_data, max_size=10000, min_freq=2)
+german.build_vocab(train_data, max_size=10000, min_freq=2)
+
+train_iterator, validation_iterator, test_iterator = BucketIterator.splits(
+    datasets=(train_data, validation_data, test_data),
+    batch_size=64
+)
+
+
+class Encoder(nn.Module):
+    def __init__(self, input_size, embedding_size, hidden_size, num_layers, p) -> None:
+        super(Encoder).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+
+        self.dropout = nn.Dropout(p)
+        self.embedding = nn.Embedding(input_size, embedding_size)
+
+        self.rnn = nn.LSTM(embedding_size, hidden_size, num_layers, dropout=p)
+
+    def forward(self, x):
+        # x shape : (seq_length, batch_size)
+
+        embedding = self.dropout(self.embedding(x))
+        # embedding shape : (seq_length, batch_size, embedding_size)
+
+        outputs, (hidden, cell) = self.rnn(embedding)
+
+        return hidden, cell
+
+
+class Decoder(nn.Module):
+    def __init__(self, input_size, embedding_size, hidden_size, output_size, num_layers, p) -> None:
+        super(Decoder).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+
+        self.dropout = nn.Dropout(p)
+        self.embedding = nn.Embedding(input_size, embedding_size)
+
+        self.rnn = nn.LSTM(embedding_size, hidden_size, num_layers, dropout=p)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x, hidden, cell):
+
+        x = x.unsqueeze(0)
+
+        embedding = self.dropout(self.embedding(x))
+
+        outputs, (hidden, cell) = self.rnn(embedding, (hidden, cell))
+
+        predictions = self.fc(outputs)
+
+        predictions = predictions.squeeze(0)
+
+        return predictions, hidden, cell
+
+
+class Seq2Seq(nn.Module):
+    pass
