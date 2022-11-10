@@ -31,11 +31,6 @@ train_data, validation_data, test_data = Multi30k.splits(
 english.build_vocab(train_data, max_size=10000, min_freq=2)
 german.build_vocab(train_data, max_size=10000, min_freq=2)
 
-train_iterator, validation_iterator, test_iterator = BucketIterator.splits(
-    datasets=(train_data, validation_data, test_data),
-    batch_size=64
-)
-
 
 class Encoder(nn.Module):
     def __init__(self, input_size, embedding_size, hidden_size, num_layers, p) -> None:
@@ -115,3 +110,41 @@ class Seq2Seq(nn.Module):
             ) < teacher_forcing_ratio else output.argmax(1)
 
         return outputs
+
+
+# TRAINING
+
+# Training hyperparams
+num_epochs = 25
+learning_rate = 0.001
+batch_size = 64
+
+
+# Model hyperparams
+load_model = False
+input_size_encoder = len(english.vocab)
+input_size_decoder = len(german.vocab)
+output_size = len(german.vocab)
+encoder_embedding_size = 200
+decoder_embedding_size = 200
+hidden_size = 1024
+num_layers = 2
+encoder_dropout = 0.5
+decoder_dropout = 0.5
+
+# Tensorboard
+writer = SummaryWriter(f'runs/loss_plot')
+step = 0
+
+train_iterator, validation_iterator, test_iterator = BucketIterator.splits(
+    datasets=(train_data, validation_data, test_data),
+    batch_size=batch_size,
+    # sort data with length
+    sort_within_batch=True,
+    sort_key=lambda x: len(x.src)
+)
+
+encoder_net = Encoder(input_size_encoder, encoder_embedding_size,
+                      hidden_size, num_layers, encoder_dropout)
+decoder_net = Decoder(input_size_decoder, decoder_embedding_size,
+                      hidden_size, num_layers, decoder_dropout)
