@@ -1,4 +1,3 @@
-from ast import Mult
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -74,6 +73,7 @@ class Decoder(nn.Module):
 
     def forward(self, x, hidden, cell):
 
+        # to make x's shape from (N) to (1,N)
         x = x.unsqueeze(0)
 
         embedding = self.dropout(self.embedding(x))
@@ -82,10 +82,36 @@ class Decoder(nn.Module):
 
         predictions = self.fc(outputs)
 
+        # to make prediction's shape from (1, N, length_of_vocab) to (N, length_of_vocab)
         predictions = predictions.squeeze(0)
 
         return predictions, hidden, cell
 
 
 class Seq2Seq(nn.Module):
-    pass
+    def __init__(self, encoder, decoder) -> None:
+        super(Seq2Seq).__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def forward(self, source, target, teacher_forcing_ratio=0.5):
+        batch_size = source.shape[1]
+        target_len = target.shape[0]
+        target_vocab_size = len(german.vocab)
+
+        outputs = torch.zeros(target_len, batch_size, target_vocab_size)
+
+        hidden, cell = self.encoder(source)
+
+        # grab <sos> token
+        x = target[0]
+
+        for t in range(1, target_len):
+            output, hidden, cell = self.decoder(x, hidden, cell)
+
+            outputs[t] = output
+
+            x = target[t] if random.random(
+            ) < teacher_forcing_ratio else output.argmax(1)
+
+        return outputs
