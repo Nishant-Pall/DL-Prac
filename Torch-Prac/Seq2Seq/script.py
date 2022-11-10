@@ -34,7 +34,7 @@ german.build_vocab(train_data, max_size=10000, min_freq=2)
 
 class Encoder(nn.Module):
     def __init__(self, input_size, embedding_size, hidden_size, num_layers, p) -> None:
-        super(Encoder).__init__()
+        super(Encoder, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
 
@@ -56,7 +56,7 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     def __init__(self, input_size, embedding_size, hidden_size, output_size, num_layers, p) -> None:
-        super(Decoder).__init__()
+        super(Decoder, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
 
@@ -85,7 +85,7 @@ class Decoder(nn.Module):
 
 class Seq2Seq(nn.Module):
     def __init__(self, encoder, decoder) -> None:
-        super(Seq2Seq).__init__()
+        super(Seq2Seq, self).__init__()
         self.encoder = encoder
         self.decoder = decoder
 
@@ -147,7 +147,7 @@ train_iterator, validation_iterator, test_iterator = BucketIterator.splits(
 encoder_net = Encoder(input_size_encoder, encoder_embedding_size,
                       hidden_size, num_layers, encoder_dropout)
 decoder_net = Decoder(input_size_decoder, decoder_embedding_size,
-                      hidden_size, num_layers, decoder_dropout)
+                      hidden_size, output_size, num_layers, decoder_dropout)
 
 model = Seq2Seq(encoder_net, decoder_net)
 
