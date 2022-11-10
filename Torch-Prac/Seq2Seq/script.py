@@ -148,3 +148,34 @@ encoder_net = Encoder(input_size_encoder, encoder_embedding_size,
                       hidden_size, num_layers, encoder_dropout)
 decoder_net = Decoder(input_size_decoder, decoder_embedding_size,
                       hidden_size, num_layers, decoder_dropout)
+
+model = Seq2Seq(encoder_net, decoder_net)
+
+pad_idx = english.vocab.stoi['<pad>']
+# make loss function ignore padding index
+criterion = nn.CrossEntropyLoss(ignore_index=pad_idx)
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+for epoch in range(num_epochs):
+
+    print(f'Epoch [{epoch} / {num_epochs}]')
+
+    for batch_idx, batch in enumerate(train_iterator):
+
+        inp_data = batch.src
+        target = batch.trg
+
+        output = model(inp_data, target)
+        # output is of shape (target_len, batch_size, vocab_length), we want it in 2d for loss
+        output = output[1:].reshape(-1, output.shape[2])
+        target = target[1:]
+
+        optimizer.zero_grad()
+        loss = criterion(output, target)
+        loss.backward()
+
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1)
+        optimizer.step()
+
+        writer.add_scalar('Training loss', loss, global_step=step)
+        step += 1
