@@ -9,27 +9,28 @@ import random
 from torch.utils.tensorboard import SummaryWriter  # to print to tensorboard
 from utils import translate_sentence, bleu, save_checkpoint, load_checkpoint
 
-spacy_ger = spacy.load('de_core_news_sm')
 spacy_eng = spacy.load('en_core_web_sm')
+spacy_ger = spacy.load('de_core_news_sm')
 
 
-def tokenize_ger(text):
-    return [tok.text for tok in spacy_ger.tokenizer(text)]
-
-
-def tokenize_eng(text):
+def tokenizer_eng(text):
     return [tok.text for tok in spacy_eng.tokenizer(text)]
 
 
-german = Field(tokenize=tokenize_ger, lower=True,
-               init_token="<sos>", eos_token="<eos>")
+def tokenizer_ger(text):
+    return [tok.text for tok in spacy_ger.tokenizer(text)]
 
-english = Field(
-    tokenize=tokenize_eng, lower=True, init_token="<sos>", eos_token="<eos>"
-)
 
-train_data, validation_data, test_data = Multi30k(
-    split=('train', 'valid', 'test'), language_pair=('de', 'en'))
+english = Field(tokenize=tokenizer_eng, lower=True,
+                init_token='<sos>', eos_token='<eos>')
+german = Field(tokenize=tokenizer_ger, lower=True,
+               init_token='<sos>', eos_token='<eos>')
+
+train_data, validation_data, test_data = Multi30k.splits(
+    fields=(english, german), exts=('.en', '.de'))
+
+train_data, validation_data, test_data = Multi30k.splits(
+    fields=(english, german), exts=('.en', '.de'))
 
 german.build_vocab(train_data, max_size=10000, min_freq=2)
 english.build_vocab(train_data, max_size=10000, min_freq=2)

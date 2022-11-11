@@ -28,8 +28,15 @@ german = Field(tokenize=tokenizer_ger, lower=True,
 train_data, validation_data, test_data = Multi30k.splits(
     fields=(english, german), exts=('.en', '.de'))
 
+print("*"*10)
+print("Building Vocab")
+print("*"*10)
+
 english.build_vocab(train_data, max_size=10000, min_freq=2)
 german.build_vocab(train_data, max_size=10000, min_freq=2)
+
+print(f'ENGLISH VOCAB SIZE: {len(english.vocab)}')
+print(f'GERMAN VOCAB SIZE: {len(german.vocab)}')
 
 
 class Encoder(nn.Module):
@@ -168,7 +175,7 @@ for epoch in range(num_epochs):
         output = model(inp_data, target)
         # output is of shape (target_len, batch_size, vocab_length), we want it in 2d for loss
         output = output[1:].reshape(-1, output.shape[2])
-        target = target[1:]
+        target = target[1:].reshape(-1)
 
         optimizer.zero_grad()
         loss = criterion(output, target)
