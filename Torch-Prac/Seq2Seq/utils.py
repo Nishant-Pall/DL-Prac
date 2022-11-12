@@ -9,7 +9,7 @@ def translate_sentence(model, sentence, english, german, device, max_length=50):
 
     # sys.exit()
 
-    # Load german tokenizer
+    # Load english tokenizer
     spacy_eng = spacy.load("en")
 
     # Create tokens using spacy and everything in lower case (which is what our vocab is)
