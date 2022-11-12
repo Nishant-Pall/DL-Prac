@@ -6,7 +6,7 @@ from torchtext.data import Field, BucketIterator
 import numpy as np
 import spacy
 import random
-from utils import bleu
+from utils import bleu, save_checkpoint
 from torch.utils.tensorboard import SummaryWriter
 
 spacy_eng = spacy.load('en_core_web_sm')
@@ -169,6 +169,11 @@ for epoch in range(num_epochs):
     print('*'*10)
     print(f'Epoch [{epoch} / {num_epochs}]')
     print('*'*10)
+
+    print('SAVING MODEL')
+    checkpoint = {"state_dict": model.state_dict(
+    ), "optimizer": optimizer.state_dict()}
+    save_checkpoint(checkpoint)
 
     for batch_idx, batch in enumerate(train_iterator):
 
