@@ -166,9 +166,13 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 for epoch in range(num_epochs):
 
+    print('*'*10)
     print(f'Epoch [{epoch} / {num_epochs}]')
+    print('*'*10)
 
     for batch_idx, batch in enumerate(train_iterator):
+
+        print(f'BATCH NUMBER: {batch_idx}') if batch_idx % 10 == 0 else None
 
         inp_data = batch.src
         target = batch.trg
