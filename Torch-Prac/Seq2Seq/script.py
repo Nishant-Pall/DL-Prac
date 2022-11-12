@@ -6,6 +6,7 @@ from torchtext.data import Field, BucketIterator
 import numpy as np
 import spacy
 import random
+from utils import bleu
 from torch.utils.tensorboard import SummaryWriter
 
 spacy_eng = spacy.load('en_core_web_sm')
@@ -186,3 +187,6 @@ for epoch in range(num_epochs):
 
         writer.add_scalar('Training loss', loss, global_step=step)
         step += 1
+
+score = bleu(test_data[1:100], model, german, english, device='cpu')
+print(f"Bleu score {score*100:.2f}")
