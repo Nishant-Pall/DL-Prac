@@ -1,4 +1,1 @@
 data/
-Seq2Seq/runs/
-Seq2Seq/my_checkpoint.pth.tar/
-Seq2Seq/*.tar
